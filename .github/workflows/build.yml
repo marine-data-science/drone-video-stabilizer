@@ -1,0 +1,40 @@
+name: Build Application
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          pip install poetry
+          poetry install
+
+      - name: Build Executable (Windows)
+        if: matrix.os == 'windows-latest'
+        run: poetry run pyinstaller app/VideoStabilizer.spec
+
+      - name: Build Executable (Mac & Linux)
+        if: matrix.os != 'windows-latest'
+        run: poetry run pyinstaller app/VideoStabilizer.spec
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: VideoStabilizer-${{ matrix.os }}
+          path: dist/VideoStabilizer*
