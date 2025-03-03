@@ -72,7 +72,8 @@ class VideoStabilizerApp:
             self.progress_label.config(text=f"Verarbeitung läuft ({index}/{len(videos)})")
             self.root.update_idletasks()  # GUI aktualisieren, damit das Label sofort sichtbar wird
 
-            output_path = os.path.join(os.path.dirname(video), os.path.basename(video) + "_stabilized" )
+            filename, ext = os.path.splitext(os.path.basename(video))  # Trennt Namen und Extension
+            output_path = os.path.join(os.path.dirname(video), f"{filename}_stabilized{ext}")
             self.stabilize_video(video, output_path)
 
         messagebox.showinfo("Fertig!", "Alle Videos wurden stabilisiert.")
