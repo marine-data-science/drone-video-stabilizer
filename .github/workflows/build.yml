@@ -37,6 +37,7 @@ jobs:
         run: poetry run pyinstaller app/VideoStabilizer.spec
 
       - name: Rename and prepare artifacts
+        shell: bash # important for windows case
         run: |
           if [[ -f dist/VideoStabilizer.exe ]]; then
             echo "Windows Build gefunden"
