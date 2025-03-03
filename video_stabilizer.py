@@ -65,17 +65,21 @@ class VideoStabilizerApp:
 
     def process_videos(self):
         if self.is_folder:
-            videos = [os.path.join(self.input_path, f) for f in os.listdir(self.input_path) if f.endswith(".mp4")]
+            videos = [os.path.join(self.input_path, f) for f in os.listdir(self.input_path) if f.lower().endswith(".mp4")]
         else:
             videos = [self.input_path]
 
-        for video in tqdm(videos, desc="Stabilisierung"):
+        for index, video in enumerate(tqdm(videos, desc="Stabilisierung"), start=1):
+            self.progress_label.config(text=f"Verarbeitung läuft ({index}/{len(videos)})")
+            self.root.update_idletasks()  # GUI aktualisieren, damit das Label sofort sichtbar wird
+
             output_path = os.path.join(os.path.dirname(video), "stabilized_" + os.path.basename(video))
             self.stabilize_video(video, output_path)
 
         messagebox.showinfo("Fertig!", "Alle Videos wurden stabilisiert.")
         self.progress_label.config(text="Fertig!")
         self.process_btn.config(state=tk.NORMAL)
+        self.progress["value"] = 0
 
     def stabilize_video(self, input_path, output_path):
         cap = cv2.VideoCapture(input_path)
