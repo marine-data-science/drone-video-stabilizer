@@ -36,6 +36,18 @@ jobs:
         if: matrix.os != 'windows-latest'
         run: poetry run pyinstaller app/VideoStabilizer.spec
 
+      - name: Rename and prepare artifacts
+        run: |
+          if [[ -f dist/VideoStabilizer.exe ]]; then
+            echo "Windows Build gefunden"
+          elif [[ -d dist/VideoStabilizer.app ]]; then
+            echo "macOS .app gefunden, wird gezippt..."
+            zip -r dist/VideoStabilizer.app.zip dist/VideoStabilizer.app
+          elif [[ -f dist/VideoStabilizer ]]; then
+            echo "Linux Build gefunden, wird umbenannt"
+            mv dist/VideoStabilizer dist/VideoStabilizer.bin
+          fi
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -45,6 +57,9 @@ jobs:
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/VideoStabilizer*
+            files: |
+              dist/VideoStabilizer.exe
+              dist/VideoStabilizer.app.zip
+              dist/VideoStabilizer.bin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
