@@ -9,7 +9,7 @@ root_dir = os.path.abspath(os.path.join(os.getcwd()))
 
 
 a = Analysis(
-    [os.path.join(root_dir, 'video_stabilizer.py')],
+    [os.path.join(root_dir, 'app.py')],
     pathex=[root_dir],  # Setzt das Root-Verzeichnis als Pfad
     binaries=[],
     datas=[],

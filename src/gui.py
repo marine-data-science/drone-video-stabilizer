@@ -1,10 +1,9 @@
-import cv2
-import numpy as np
 import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 from tqdm import tqdm
 import threading
+from .logic import stabilize_video
 
 class VideoStabilizerApp:
     def __init__(self, root):
@@ -73,7 +72,7 @@ class VideoStabilizerApp:
             self.progress_label.config(text=f"Verarbeitung läuft ({index}/{len(videos)})")
             self.root.update_idletasks()  # GUI aktualisieren, damit das Label sofort sichtbar wird
 
-            output_path = os.path.join(os.path.dirname(video), "stabilized_" + os.path.basename(video))
+            output_path = os.path.join(os.path.dirname(video), os.path.basename(video) + "_stabilized" )
             self.stabilize_video(video, output_path)
 
         messagebox.showinfo("Fertig!", "Alle Videos wurden stabilisiert.")
@@ -82,57 +81,12 @@ class VideoStabilizerApp:
         self.progress["value"] = 0
 
     def stabilize_video(self, input_path, output_path):
-        cap = cv2.VideoCapture(input_path)
-        fps = cap.get(cv2.CAP_PROP_FPS)
-        w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))  # Anzahl der Frames für Fortschritt
+        def on_loop_progress(frame_idx):
+            self.progress["value"] = frame_idx
+            self.root.update_idletasks()
 
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        out = cv2.VideoWriter(output_path, fourcc, fps, (w, h))
+        def before_loop(total_frames):
+            self.progress["maximum"] = total_frames
 
-        ret, ref_frame = cap.read()
-        if not ret:
-            print("Fehler beim Lesen des Videos.")
-            return
-
-        ref_gray = cv2.cvtColor(ref_frame, cv2.COLOR_BGR2GRAY)
-        orb = cv2.ORB_create(nfeatures=500)
-        kp_ref, des_ref = orb.detectAndCompute(ref_gray, None)
-        bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=False)
-
-        frame_idx = 1
         self.progress["value"] = 0
-        self.progress["maximum"] = total_frames  # Fortschrittsanzeige auf Gesamtzahl der Frames setzen
-
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                break
-
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            kp_cur, des_cur = orb.detectAndCompute(gray, None)
-
-            matches = bf.knnMatch(des_ref, des_cur, k=2)
-            good_matches = [m for m, n in matches if m.distance < 0.7 * n.distance]
-
-            if len(good_matches) >= 4:
-                ref_pts = np.float32([kp_ref[m.queryIdx].pt for m in good_matches])
-                cur_pts = np.float32([kp_cur[m.trainIdx].pt for m in good_matches])
-                H, mask = cv2.findHomography(cur_pts, ref_pts, cv2.RANSAC)
-                stabilized_frame = cv2.warpPerspective(frame, H, (w, h))
-                out.write(stabilized_frame)
-            else:
-                out.write(frame)
-
-            frame_idx += 1
-            self.progress["value"] = frame_idx  # Fortschritt aktualisieren
-            self.root.update_idletasks()  # GUI aktualisieren
-
-        cap.release()
-        out.release()
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = VideoStabilizerApp(root)
-    root.mainloop()
+        stabilize_video(input_path, output_path, before_loop, on_loop_progress)
