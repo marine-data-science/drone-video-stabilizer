@@ -38,3 +38,10 @@ jobs:
         with:
           name: VideoStabilizer-${{ matrix.os }}
           path: dist/VideoStabilizer*
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/VideoStabilizer*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
