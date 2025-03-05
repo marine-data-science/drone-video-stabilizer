@@ -68,18 +68,34 @@ class VideoStabilizerApp:
         else:
             videos = [self.input_path]
 
-        for index, video in enumerate(tqdm(videos, desc="Stabilisierung"), start=1):
-            self.progress_label.config(text=f"Verarbeitung läuft ({index}/{len(videos)})")
-            self.root.update_idletasks()  # GUI aktualisieren, damit das Label sofort sichtbar wird
+        total_videos = len(videos)
 
-            filename, ext = os.path.splitext(os.path.basename(video))  # Trennt Namen und Extension
-            output_path = os.path.join(os.path.dirname(video), f"{filename}_stabilized{ext}")
-            self.stabilize_video(video, output_path)
+        def process_next(index=0):
+            if index < total_videos:
+                video = videos[index]
+                output_path = os.path.join(os.path.dirname(video), f"{os.path.splitext(os.path.basename(video))[0]}_stabilized.mp4")
 
-        messagebox.showinfo("Fertig!", "Alle Videos wurden stabilisiert.")
-        self.progress_label.config(text="Fertig!")
-        self.process_btn.config(state=tk.NORMAL)
-        self.progress["value"] = 0
+                # GUI-Update im Hauptthread
+                self.root.after(0, self.progress_label.config, {"text": f"Verarbeitung läuft ({index+1}/{total_videos})"})
+                self.root.after(0, self.root.update_idletasks)
+
+                # Video-Stabilisierung in einem separaten Thread starten
+                def run_stabilization():
+                    try:
+                        self.stabilize_video(video, output_path)
+                        self.root.after(0, process_next, index + 1)  # Starte das nächste Video nach Abschluss
+                    except Exception as e:
+                        self.root.after(0, messagebox.showerror, "Fehler", f"Fehler bei {video}: {str(e)}")
+
+                threading.Thread(target=run_stabilization, daemon=True).start()
+            else:
+                # Verarbeitung abgeschlossen
+                self.root.after(0, messagebox.showinfo, "Fertig!", "Alle Videos wurden stabilisiert.")
+                self.root.after(0, self.progress_label.config, {"text": "Fertig!"})
+                self.root.after(0, self.process_btn.config, {"state": tk.NORMAL})
+                self.root.after(0, self.progress.config, {"value": 0})
+
+        self.root.after(0, process_next)
 
     def stabilize_video(self, input_path, output_path):
         def on_loop_progress(frame_idx):
