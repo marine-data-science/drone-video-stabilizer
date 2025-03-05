@@ -8,9 +8,9 @@
 Video Stabilizer is a cross-platform tool designed to stabilize drone footage by correcting unwanted rotations and shifts caused by wind. It automatically detects fixed reference points (such as the edges of a swimming pool) and aligns the frames accordingly, ensuring a smooth and stable video output.
 It is particularly useful when the footage should be used to extract information, such as for scientific analysis, like track recognition or object detection.
 
-<p align="center">
-  <img src="https://github.com/marine-data-science/drone-video-stabilizer/blob/main/app/docs/comparison.gif" alt="Example Footage Comparison">
-</p>
+<div align="center">
+  <img src="app/docs/comparison.gif" alt="Example Footage Comparison">
+</div>
 
 
 The application provides both a **graphical user interface (GUI)** for ease of use and a **command-line interface (CLI)** for automation and advanced users.
@@ -54,9 +54,9 @@ Simply launch the application and follow these steps:
 2. Click "Start" to begin stabilization.
 3. The stabilized videos will be saved with `_stabilized` appended to the filename.
 
-<p align="center">
-  <img src="https://github.com/marine-data-science/drone-video-stabilizer/blob/main/app/docs/gui.png" width="400px" alt="Screenshot of the GUI">
-</p>
+<div align="center">
+  <img src="app/docs/gui.png" width="400px" alt="Screenshot of the GUI">
+</div>
 
 
 ### Command-Line Interface (CLI)
