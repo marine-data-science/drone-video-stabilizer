@@ -28,6 +28,11 @@ jobs:
           pip install poetry
           poetry install
 
+      - name: Generate Icons
+        run: |
+          poetry run generate-icons
+        shell: bash
+
       - name: Build Executable (Windows)
         if: matrix.os == 'windows-latest'
         run: poetry run pyinstaller app/VideoStabilizer.spec

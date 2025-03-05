@@ -68,6 +68,16 @@ poetry run video-stabilizer <Input.mp4> [--output stabilized_video.mp4]
 - `<Input>`: Specifies the input video file.
 - `--output <file>`: Defines the output filename (optional; defaults to appending `_stabilized`).
 
+## App Icon Handling
+The application icon (`Icon.png`) must be placed in the `app/icon/` directory. During CI, this icon is automatically converted into the required formats (`.ico`, `.icns`, `.png`) for Windows, macOS, and Linux.
+The converted icons are not stored in the repository but are generated on-demand in the build pipeline.
+
+For local testing, you can manually generate the icons by running:
+```bash
+poetry run generate-icons
+```
+This command converts `Icon.png` into the necessary formats and stores them in `app/icon/output_icons/`.
+
 ## Development
 For developers who want to contribute or modify the project:
 ```bash

@@ -17,6 +17,7 @@ pillow = "^11.1.0"
 
 [tool.poetry.scripts]
 video-stabilizer = "cli:main"
+generate-icons = "app.icon.icon_converter:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
