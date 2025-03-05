@@ -88,6 +88,7 @@ poetry install
 
 To build the standalone application:
 ```bash
+poetry run generate-icons
 poetry run pyinstaller app/VideoStabilizer.spec
 ```
 
