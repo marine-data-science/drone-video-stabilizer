@@ -62,11 +62,12 @@ Simply launch the application and follow these steps:
 ### Command-Line Interface (CLI)
 For users who prefer CLI, the application provides a simple command structure:
 ```bash
-poetry run video-stabilizer <Input.mp4> [--output stabilized_video.mp4]
+poetry run video-stabilizer <Input.mp4> [--output stabilized_video.mp4] [--skip-outlier-frames]
 ```
 #### Options:
 - `<Input>`: Specifies the input video file.
 - `--output <file>`: Defines the output filename (optional; defaults to appending `_stabilized`).
+- `--skip-outlier-frames`: A flag to control if the algorithm should continue when the video contains frames which cannot be transformed to fit to the first frame.
 
 ## App Icon Handling
 The application icon (`Icon.png`) must be placed in the `app/icon/` directory. During CI, this icon is automatically converted into the required formats (`.ico`, `.icns`, `.png`) for Windows, macOS, and Linux.
