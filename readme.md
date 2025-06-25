@@ -4,6 +4,8 @@
 
 # Video Stabilizer for stationary Drone Videos
 
+[![DOI](https://zenodo.org/badge/923014459.svg)](https://doi.org/10.5281/zenodo.15736406)
+
 ## Overview
 Video Stabilizer is a cross-platform tool designed to stabilize drone footage by correcting unwanted rotations and shifts caused by wind. It automatically detects fixed reference points (such as the edges of a swimming pool) and aligns the frames accordingly, ensuring a smooth and stable video output.
 It is particularly useful when the footage should be used to extract information, such as for scientific analysis, like track recognition or object detection.
