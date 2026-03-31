@@ -12,7 +12,7 @@ opencv-python = "^4.5.3"
 numpy = "^1.21.0"
 tqdm = "^4.61.2"
 pyinstaller = "^6.0"
-pygments = "^2.9.0"
+pygments = "^2.20.0"
 pillow = "^12.1.1"
 rich = "^14.0.0"
 
